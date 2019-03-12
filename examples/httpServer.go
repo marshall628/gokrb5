@@ -54,12 +54,14 @@ func testAppHandler(w http.ResponseWriter, r *http.Request) {
 <li>User's realm: %s</li>
 <li>Authn time: %v</li>
 <li>Session ID: %s</li>
+<li>Email: %s</li>
 <ul>
 </html>`,
 		creds.UserName(),
 		creds.Domain(),
 		creds.AuthTime(),
 		creds.SessionID(),
+		creds.Attributes()["mail"].(string),
 	)
 	return
 }
