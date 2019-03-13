@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 
@@ -291,6 +292,36 @@ func TestService_SPNEGOKRB_Upload(t *testing.T) {
 	}
 }
 
+func TestService_SPNEGO_ADService(t *testing.T) {
+	test.AD(t)
+
+	s := httpServerAD()
+	defer s.Close()
+	r, _ := http.NewRequest("GET", s.URL, nil)
+
+	b, _ := hex.DecodeString(testdata.TESTUSER1_USERKRB5_AD_KEYTAB)
+	kt := keytab.New()
+	kt.Unmarshal(b)
+	c, _ := config.NewConfigFromString(testdata.TEST_KRB5CONF)
+	l := log.New(os.Stderr, "SPNEGO Client:", log.LstdFlags)
+	cl := client.NewClientWithKeytab("testuser1", "USER.GOKRB5", kt, c, client.Logger(l))
+
+	err := cl.Login()
+	if err != nil {
+		t.Fatalf("error on AS_REQ: %v\n", err)
+	}
+
+	spnegoCl := NewClient(cl, nil, "HTTP/user2.user.gokrb5")
+	resp, err := spnegoCl.Do(r)
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	if !strings.Contains(string(body), "Email: testuser1@email.user.gokrb5") {
+		t.Error("email address from claims info not returned")
+	}
+}
+
 func httpGet(r *http.Request, wg *sync.WaitGroup) {
 	defer wg.Done()
 	http.DefaultClient.Do(r)
@@ -303,6 +334,18 @@ func httpServer() *httptest.Server {
 	kt.Unmarshal(b)
 	th := http.HandlerFunc(testAppHandler)
 	s := httptest.NewServer(SPNEGOKRB5Authenticate(th, kt, service.Logger(l)))
+	return s
+}
+
+func httpServerAD() *httptest.Server {
+	//SPN HTTP/user2.user.gokrb5 registered against testuser2@USER.GOKRB5
+	l := log.New(os.Stderr, "GOKRB5 AD Service Tests: ", log.Ldate|log.Ltime|log.Lshortfile)
+	b, _ := hex.DecodeString(testdata.TESTUSER2_USERKRB5_AD_KEYTAB)
+	kt := keytab.New()
+	kt.Unmarshal(b)
+	th := http.HandlerFunc(testAppHandler)
+	//TODO the test server set up is impacted by https://github.com/jcmturner/gokrb5/issues/275
+	s := httptest.NewServer(SPNEGOKRB5Authenticate(th, kt, service.Logger(l), service.KeytabPrincipal("testuser2")))
 	return s
 }
 
@@ -330,9 +373,28 @@ func testAppHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	ctx := r.Context()
-	fmt.Fprintf(w, "<html>\nTEST.GOKRB5 Handler\nAuthenticed user: %s\nUser's realm: %s\n</html>",
-		ctx.Value(CTXKeyCredentials).(goidentity.Identity).UserName(),
-		ctx.Value(CTXKeyCredentials).(goidentity.Identity).Domain())
+	creds := ctx.Value(CTXKeyCredentials).(goidentity.Identity)
+	var email string
+	if mail, ok := creds.Attributes()["mail"].([]string); ok {
+		email = mail[0]
+	}
+	fmt.Fprintf(w,
+		`<html>
+<h1>GOKRB5 Handler</h1>
+<ul>
+<li>Authenticed user: %s</li>
+<li>User's realm: %s</li>
+<li>Authn time: %v</li>
+<li>Session ID: %s</li>
+<li>Email: %+v</li>
+<ul>
+</html>`,
+		creds.UserName(),
+		creds.Domain(),
+		creds.AuthTime(),
+		creds.SessionID(),
+		email,
+	)
 	return
 }
 

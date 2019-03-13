@@ -45,7 +45,11 @@ func main() {
 func testAppHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	ctx := r.Context()
-	creds := ctx.Value(spnego.CTXKeyCredentials).(goidentity.Identity)
+	creds := ctx.Value(CTXKeyCredentials).(goidentity.Identity)
+	var email string
+	if mail, ok := creds.Attributes()["mail"].([]string); ok {
+		email = mail[0]
+	}
 	fmt.Fprintf(w,
 		`<html>
 <h1>GOKRB5 Handler</h1>
@@ -54,14 +58,14 @@ func testAppHandler(w http.ResponseWriter, r *http.Request) {
 <li>User's realm: %s</li>
 <li>Authn time: %v</li>
 <li>Session ID: %s</li>
-<li>Email: %s</li>
+<li>Email: %+v</li>
 <ul>
 </html>`,
 		creds.UserName(),
 		creds.Domain(),
 		creds.AuthTime(),
 		creds.SessionID(),
-		creds.Attributes()["mail"].(string),
+		email,
 	)
 	return
 }

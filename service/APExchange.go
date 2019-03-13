@@ -66,7 +66,7 @@ func addPACAttributes(tkt messages.Ticket, creds *credentials.Credentials, s *Se
 				LogonDomainName:     pac.KerbValidationInfo.LogonDomainName.Value,
 				LogonDomainID:       pac.KerbValidationInfo.LogonDomainID.String(),
 			})
-			if pac.ClientClaimsInfo.ClaimsSetMetadata.CompressionFormat == mstypes.CompressionFormatNone {
+			if pac.ClientClaimsInfo != nil && pac.ClientClaimsInfo.ClaimsSetMetadata.CompressionFormat == mstypes.CompressionFormatNone {
 				//Only uncompressed supported currently by gokrb5
 				for _, c := range pac.ClientClaimsInfo.ClaimsSet.ClaimsArrays {
 					for _, e := range c.ClaimEntries {
@@ -74,7 +74,11 @@ func addPACAttributes(tkt messages.Ticket, creds *credentials.Credentials, s *Se
 						attr := strings.Split(id[len(id)-1], ":")[0]
 						switch e.Type {
 						case mstypes.ClaimTypeIDString:
-							creds.SetAttribute(attr, e.TypeString.Value)
+							s := make([]string, len(e.TypeString.Value))
+							for i, l := range e.TypeString.Value {
+								s[i] = l.String()
+							}
+							creds.SetAttribute(attr, s)
 						case mstypes.ClaimTypeIDInt64:
 							creds.SetAttribute(attr, e.TypeInt64.Value)
 						case mstypes.ClaimTypeIDUInt64:
