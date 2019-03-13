@@ -87,4 +87,5 @@ func addPACAttributes(tkt messages.Ticket, creds *credentials.Credentials, s *Se
 			}
 		}
 	}
+	return nil
 }
