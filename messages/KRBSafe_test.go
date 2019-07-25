@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/jcmturner/gokrb5.v7/iana"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/addrtype"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/msgtype"
-	"gopkg.in/jcmturner/gokrb5.v7/test/testdata"
+	"github.com/marshall628/gokrb5/iana"
+	"github.com/marshall628/gokrb5/iana/addrtype"
+	"github.com/marshall628/gokrb5/iana/msgtype"
+	"github.com/marshall628/gokrb5/test/testdata"
 )
 
 func TestUnmarshalKRBSafe(t *testing.T) {

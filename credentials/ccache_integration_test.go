@@ -12,10 +12,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/nametype"
-	"gopkg.in/jcmturner/gokrb5.v7/test"
-	"gopkg.in/jcmturner/gokrb5.v7/test/testdata"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/iana/nametype"
+	"github.com/marshall628/gokrb5/test"
+	"github.com/marshall628/gokrb5/test/testdata"
+	"github.com/marshall628/gokrb5/types"
 )
 
 const (

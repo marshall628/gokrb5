@@ -9,7 +9,7 @@ import (
 	"net"
 
 	"github.com/jcmturner/gofork/encoding/asn1"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/addrtype"
+	"github.com/marshall628/gokrb5/iana/addrtype"
 )
 
 /*

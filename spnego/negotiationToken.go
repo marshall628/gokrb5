@@ -6,11 +6,11 @@ import (
 	"fmt"
 
 	"github.com/jcmturner/gofork/encoding/asn1"
-	"gopkg.in/jcmturner/gokrb5.v7/client"
-	"gopkg.in/jcmturner/gokrb5.v7/gssapi"
-	"gopkg.in/jcmturner/gokrb5.v7/messages"
-	"gopkg.in/jcmturner/gokrb5.v7/service"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/client"
+	"github.com/marshall628/gokrb5/gssapi"
+	"github.com/marshall628/gokrb5/messages"
+	"github.com/marshall628/gokrb5/service"
+	"github.com/marshall628/gokrb5/types"
 )
 
 /*

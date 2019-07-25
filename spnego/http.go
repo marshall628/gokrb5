@@ -15,12 +15,12 @@ import (
 	"strings"
 
 	"gopkg.in/jcmturner/goidentity.v3"
-	"gopkg.in/jcmturner/gokrb5.v7/client"
-	"gopkg.in/jcmturner/gokrb5.v7/gssapi"
-	"gopkg.in/jcmturner/gokrb5.v7/keytab"
-	"gopkg.in/jcmturner/gokrb5.v7/krberror"
-	"gopkg.in/jcmturner/gokrb5.v7/service"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/client"
+	"github.com/marshall628/gokrb5/gssapi"
+	"github.com/marshall628/gokrb5/keytab"
+	"github.com/marshall628/gokrb5/krberror"
+	"github.com/marshall628/gokrb5/service"
+	"github.com/marshall628/gokrb5/types"
 )
 
 // Client side functionality //

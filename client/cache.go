@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"gopkg.in/jcmturner/gokrb5.v7/messages"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/messages"
+	"github.com/marshall628/gokrb5/types"
 )
 
 // Cache for service tickets held by the client.

@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/jcmturner/gofork/encoding/asn1"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/asnAppTag"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/msgtype"
-	"gopkg.in/jcmturner/gokrb5.v7/krberror"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/iana/asnAppTag"
+	"github.com/marshall628/gokrb5/iana/msgtype"
+	"github.com/marshall628/gokrb5/krberror"
+	"github.com/marshall628/gokrb5/types"
 )
 
 /*

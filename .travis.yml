@@ -6,7 +6,7 @@ go:
   - 1.12.x
   - master
 
-go_import_path: gopkg.in/jcmturner/gokrb5.v7
+go_import_path: github.com/marshall628/gokrb5
 
 sudo: required
 

@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"gopkg.in/jcmturner/gokrb5.v7/iana/nametype"
-	"gopkg.in/jcmturner/gokrb5.v7/krberror"
-	"gopkg.in/jcmturner/gokrb5.v7/messages"
-	"gopkg.in/jcmturner/gokrb5.v7/types"
+	"github.com/marshall628/gokrb5/iana/nametype"
+	"github.com/marshall628/gokrb5/krberror"
+	"github.com/marshall628/gokrb5/messages"
+	"github.com/marshall628/gokrb5/types"
 )
 
 // sessions hold TGTs and are keyed on the realm name

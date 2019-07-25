@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/jcmturner/gokrb5.v7/iana/chksumtype"
-	"gopkg.in/jcmturner/gokrb5.v7/test/testdata"
+	"github.com/marshall628/gokrb5/iana/chksumtype"
+	"github.com/marshall628/gokrb5/test/testdata"
 )
 
 func TestPAC_SignatureData_Unmarshal_Server_Signature(t *testing.T) {
