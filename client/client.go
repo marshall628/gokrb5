@@ -177,7 +177,7 @@ func (cl *Client) Login() error {
 		// no credentials but there is a session with tgt already
 		return nil
 	}
-	ASReq, err = messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
+	ASReq, err := messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
 	fmt.Println("ASReq is:")
 	fmt.Println("===========================")
 	spew.Dump(ASReq)
@@ -186,7 +186,7 @@ func (cl *Client) Login() error {
 		return krberror.Errorf(err, krberror.KRBMsgError, "error generating new AS_REQ")
 	}
 	
-	ASRep, err = cl.ASExchange(cl.Credentials.Domain(), ASReq, 0)
+	ASRep, err := cl.ASExchange(cl.Credentials.Domain(), ASReq, 0)
 	fmt.Println("ASRep is:")
 	fmt.Println("===========================")
 	spew.Dump(ASRep)
