@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"gopkg.in/jcmturner/gokrb5.v7/config"
 	"gopkg.in/jcmturner/gokrb5.v7/credentials"
 	"gopkg.in/jcmturner/gokrb5.v7/crypto"
@@ -161,33 +162,40 @@ func (cl *Client) IsConfigured() (bool, error) {
 }
 
 // Login the client with the KDC via an AS exchange.
-func (cl *Client) Login() (messages.ASReq, messages.ASRep, error) {
-	asreq := nil
-	asrep := nil
+func (cl *Client) Login() error {
 	if ok, err := cl.IsConfigured(); !ok {
-		return asreq, asrep, err
+		return err
 	}
 	if !cl.Credentials.HasPassword() && !cl.Credentials.HasKeytab() {
 		_, endTime, _, _, err := cl.sessionTimes(cl.Credentials.Domain())
 		if err != nil {
-			return asreq, asrep, krberror.Errorf(err, krberror.KRBMsgError, "no user credentials available and error getting any existing session")
+			return krberror.Errorf(err, krberror.KRBMsgError, "no user credentials available and error getting any existing session")
 		}
 		if time.Now().UTC().After(endTime) {
-			return asreq, asrep, krberror.NewKrberror(krberror.KRBMsgError, "cannot login, no user credentials available and no valid existing session")
+			return krberror.NewKrberror(krberror.KRBMsgError, "cannot login, no user credentials available and no valid existing session")
 		}
 		// no credentials but there is a session with tgt already
-		return asreq, nil
+		return nil
 	}
-	asreq, err = messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
+	ASReq, err = messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
+	fmt.Println("ASReq is:")
+	fmt.Println("===========================")
+	spew.Dump(ASReq)
+	fmt.Println("===========================")
 	if err != nil {
-		return asreq, asrep, krberror.Errorf(err, krberror.KRBMsgError, "error generating new AS_REQ")
+		return krberror.Errorf(err, krberror.KRBMsgError, "error generating new AS_REQ")
 	}
-	asrep, err = cl.ASExchange(cl.Credentials.Domain(), asreq, 0)
+	
+	ASRep, err = cl.ASExchange(cl.Credentials.Domain(), ASReq, 0)
+	fmt.Println("ASRep is:")
+	fmt.Println("===========================")
+	spew.Dump(ASRep)
+	fmt.Println("===========================")
 	if err != nil {
-		return asreq, asrep, err
+		return err
 	}
 	cl.addSession(ASRep.Ticket, ASRep.DecryptedEncPart)
-	return asreq, asrep, nil
+	return nil
 }
 
 
