@@ -161,32 +161,35 @@ func (cl *Client) IsConfigured() (bool, error) {
 }
 
 // Login the client with the KDC via an AS exchange.
-func (cl *Client) Login() error {
+func (cl *Client) Login() (messages.ASReq, messages.ASRep, error) {
+	asreq := nil
+	asrep := nil
 	if ok, err := cl.IsConfigured(); !ok {
-		return err
+		return asreq, asrep, err
 	}
 	if !cl.Credentials.HasPassword() && !cl.Credentials.HasKeytab() {
 		_, endTime, _, _, err := cl.sessionTimes(cl.Credentials.Domain())
 		if err != nil {
-			return krberror.Errorf(err, krberror.KRBMsgError, "no user credentials available and error getting any existing session")
+			return asreq, asrep, krberror.Errorf(err, krberror.KRBMsgError, "no user credentials available and error getting any existing session")
 		}
 		if time.Now().UTC().After(endTime) {
-			return krberror.NewKrberror(krberror.KRBMsgError, "cannot login, no user credentials available and no valid existing session")
+			return asreq, asrep, krberror.NewKrberror(krberror.KRBMsgError, "cannot login, no user credentials available and no valid existing session")
 		}
 		// no credentials but there is a session with tgt already
-		return nil
+		return asreq, nil
 	}
-	ASReq, err := messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
+	asreq, err = messages.NewASReqForTGT(cl.Credentials.Domain(), cl.Config, cl.Credentials.CName())
 	if err != nil {
-		return krberror.Errorf(err, krberror.KRBMsgError, "error generating new AS_REQ")
+		return asreq, asrep, krberror.Errorf(err, krberror.KRBMsgError, "error generating new AS_REQ")
 	}
-	ASRep, err := cl.ASExchange(cl.Credentials.Domain(), ASReq, 0)
+	asrep, err = cl.ASExchange(cl.Credentials.Domain(), asreq, 0)
 	if err != nil {
-		return err
+		return asreq, asrep, err
 	}
 	cl.addSession(ASRep.Ticket, ASRep.DecryptedEncPart)
-	return nil
+	return asreq, asrep, nil
 }
+
 
 // realmLogin obtains or renews a TGT and establishes a session for the realm specified.
 func (cl *Client) realmLogin(realm string) error {
